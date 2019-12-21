@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"strconv"
 
-	"github.com/stefanprodan/podinfo/pkg/version"
+	"github.com/LensPlatform/Lens-users-svc/pkg/version"
 )
 
 // Info godoc

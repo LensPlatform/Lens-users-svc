@@ -1,4 +1,4 @@
-module github.com/stefanprodan/podinfo
+module github.com/LensPlatform/Lens-users-svc
 
 go 1.13
 
@@ -40,6 +40,8 @@ require (
 	github.com/spf13/jwalterweatherman v0.0.0-20180814060501-14d3d4c51834 // indirect
 	github.com/spf13/pflag v1.0.2
 	github.com/spf13/viper v1.1.0
+	github.com/stefanprodan/k8s-podinfo v1.8.0 // indirect
+	github.com/stefanprodan/podinfo v1.8.0
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14 // indirect
 	github.com/swaggo/http-swagger v0.0.0-20190614090009-c2865af9083e
 	github.com/swaggo/swag v1.6.2

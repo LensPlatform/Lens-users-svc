@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/stefanprodan/podinfo/pkg/version"
+	"github.com/LensPlatform/Lens-users-svc/pkg/version"
 )
 
 func init() {

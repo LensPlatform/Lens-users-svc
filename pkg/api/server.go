@@ -17,8 +17,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
-	_ "github.com/stefanprodan/podinfo/pkg/api/docs"
-	"github.com/stefanprodan/podinfo/pkg/fscache"
+	_ "github.com/LensPlatform/Lens-users-svc/pkg/api/docs"
+	"github.com/LensPlatform/Lens-users-svc/pkg/fscache"
 	"github.com/swaggo/http-swagger"
 	"go.uber.org/zap"
 )

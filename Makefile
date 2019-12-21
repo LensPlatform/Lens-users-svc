@@ -16,7 +16,7 @@ format:
 	gofmt -s -w .
 
 start-services:
-	cd docker/dev && docker-compose up && cd ../..
+	docker-compose up
 
 run:
 	GO111MODULE=on go run -ldflags "-s -w -X github.com/$(DOCKER_REPOSITORY)/$(NAME)/pkg/version.REVISION=$(GIT_COMMIT)" cmd/podinfo/* \
