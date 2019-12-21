@@ -1,0 +1,12 @@
+FROM golang
+
+RUN mkdir -p /go/src/github.com/LensPlatform/Lens-users-svc/pkg
+
+ADD . /go/src/github.com/LensPlatform/Lens-users-svc
+WORKDIR /go/src/github.com/LensPlatform/Lens-users-svc/pkg
+
+RUN go get -t -v ./...
+RUN go get github.com/canthefason/go-watcher
+RUN go install github.com/canthefason/go-watcher/cmd/watcher
+
+ENTRYPOINT watcher -run github.com/LensPlatform/Lens-users-svc/cmd/podinfo -watch github.com/LensPlatform/Lens-users-svc/pkg

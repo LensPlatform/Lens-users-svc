@@ -1,0 +1,90 @@
+version: "2"
+services:
+  #traefik:
+  #  image: traefik:v2.0.0-rc3
+  #  container_name: "traefik"
+  #  command:
+  #    - "--log.level=DEBUG"
+  #    - "--api.insecure=true"
+  #    - "--providers.docker=true"
+  #    - "--providers.docker.exposedbydefault=false"
+  #    - "--entrypoints.web.address=:80"
+  #  ports:
+  #    - "80:80"
+  #    - "8080:8080"
+  #  volumes:
+  #    - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  lens-users-svc-v1:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    container_name: Lens-users-svc-v1
+    ports:
+      - 9999:9999
+      - 9898:9898
+    restart: always
+    networks:
+      - app-tier
+    #labels:
+    #  - "traefik.enable=true"
+    #  - "traefik.http.routers.users-microservice-v1.rule=Host(`users-microservice-v1.localhost`)"
+    #  - "traefik.http.routers.users-microservice-v1.entrypoints=web"
+    depends_on:
+      - stats
+      - queue-ram1
+      - queue-disc1
+    volumes:
+      - '.:/go/src/github.com/LensPlatform/Lens-users-svc'
+  stats:
+    image: bitnami/rabbitmq:3.7
+    environment:
+      - RABBITMQ_NODE_TYPE=stats
+      - RABBITMQ_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=bitnami
+    networks:
+      - app-tier
+    ports:
+      - 15672:15672
+      - 5672:5672
+    volumes:
+      - 'rabbitmqstats_data:/bitnami'
+  queue-disc1:
+    image: bitnami/rabbitmq:3.7
+    environment:
+      - RABBITMQ_NODE_TYPE=queue-disc
+      - RABBITMQ_NODE_NAME=rabbit@queue-disc1
+      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=bitnami
+    networks:
+      - app-tier
+    volumes:
+      - 'rabbitmqdisc1_data:/bitnami'
+  queue-ram1:
+    image: bitnami/rabbitmq:3.7
+    environment:
+      - RABBITMQ_NODE_TYPE=queue-ram
+      - RABBITMQ_NODE_NAME=rabbit@queue-ram1
+      - RABBITMQ_CLUSTER_NODE_NAME=rabbit@stats
+      - RABBITMQ_ERL_COOKIE=s3cr3tc00ki3
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=bitnami
+    networks:
+      - app-tier
+    volumes:
+      - 'rabbitmqram1_data:/bitnami'
+
+volumes:
+  rabbitmqstats_data:
+    driver: local
+  rabbitmqdisc1_data:
+    driver: local
+  rabbitmqram1_data:
+    driver: local
+
+networks:
+  app-tier:
+    driver: bridge
