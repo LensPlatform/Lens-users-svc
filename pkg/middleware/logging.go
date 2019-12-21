@@ -1,7 +1,8 @@
-package api
+package middleware
 
 import (
 	"net/http"
+	"time"
 
 	"go.uber.org/zap"
 )
@@ -26,6 +27,12 @@ func (m *LoggingMiddleware) Handler(next http.Handler) http.Handler {
 			zap.String("remote", r.RemoteAddr),
 			zap.String("user-agent", r.UserAgent()),
 		)
+
+		defer func(begin time.Time) {
+			m.logger.Info("Transport Log",
+				zap.Any("invocation duration", time.Since(begin)))
+		}(time.Now())
+
 		next.ServeHTTP(w, r)
 	})
 }

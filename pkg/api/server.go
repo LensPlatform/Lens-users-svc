@@ -3,9 +3,14 @@ package api
 import (
 	"context"
 	"fmt"
+
+	"github.com/jinzhu/gorm"
+	"github.com/openzipkin/zipkin-go"
+	"github.com/openzipkin/zipkin-go/model"
 	"github.com/swaggo/swag"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
+	"golang.org/x/time/rate"
 
 	"net/http"
 	_ "net/http/pprof"
@@ -17,18 +22,26 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
+
+	"github.com/LensPlatform/Lens-users-svc/pkg/amqp"
 	_ "github.com/LensPlatform/Lens-users-svc/pkg/api/docs"
+	"github.com/LensPlatform/Lens-users-svc/pkg/config"
 	"github.com/LensPlatform/Lens-users-svc/pkg/fscache"
+	"github.com/LensPlatform/Lens-users-svc/pkg/middleware"
+	"github.com/LensPlatform/Lens-users-svc/pkg/models"
+
+	reporterhttp "github.com/openzipkin/zipkin-go/reporter/http"
+
 	"github.com/swaggo/http-swagger"
 	"go.uber.org/zap"
 )
 
-// @title Podinfo API
+// @title Lens Platform API
 // @version 2.0
-// @description Go microservice template for Kubernetes.
+// @description Go microservice for Kubernetes.
 
 // @contact.name Source Code
-// @contact.url https://github.com/stefanprodan/podinfo
+// @contact.url https://github.com/LensPlatform/Lens-users-svc
 
 // @license.name MIT License
 // @license.url https://github.com/stefanprodan/podinfo/blob/master/LICENSE
@@ -72,14 +85,18 @@ type Server struct {
 	router *mux.Router
 	logger *zap.Logger
 	config *Config
+	zipkinEndpoint string
 }
 
-func NewServer(config *Config, logger *zap.Logger) (*Server, error) {
+func NewServer(config *Config, logger *zap.Logger, endpoint string) (*Server, error) {
 	srv := &Server{
 		router: mux.NewRouter(),
 		logger: logger,
 		config: config,
+		zipkinEndpoint: endpoint,
 	}
+
+	logger.Info("Tracer", zap.String("type of tracer", "zipkin"), zap.String("URL", endpoint))
 
 	return srv, nil
 }
@@ -126,10 +143,22 @@ func (s *Server) registerHandlers() {
 }
 
 func (s *Server) registerMiddlewares() {
-	prom := NewPrometheusMiddleware()
-	s.router.Use(prom.Handler)
-	httpLogger := NewLoggingMiddleware(s.logger)
-	s.router.Use(httpLogger.Handler)
+	promMw := middleware.NewPrometheusMiddleware()
+	s.router.Use(promMw.Handler)
+
+	httpLoggerMw := middleware.NewLoggingMiddleware(s.logger)
+	s.router.Use(httpLoggerMw.Handler)
+
+	rateLimitterMw := middleware.NewRateLimitMiddleware(rate.Every(time.Second), 5)
+	s.router.Use(rateLimitterMw.Handler)
+
+	instrumentationMw := middleware.NewInstrumentationMiddleware("API")
+	s.router.Use(instrumentationMw.Handler)
+
+	tracer, _ := s.NewZipkinTracer()
+	zipkinMw := middleware.NewZipKinTracerMiddleware("API", tracer)
+	s.router.Use(zipkinMw.Handler)
+
 	s.router.Use(versionMiddleware)
 	if s.config.RandomDelay {
 		s.router.Use(randomDelayMiddleware)
@@ -139,11 +168,86 @@ func (s *Server) registerMiddlewares() {
 	}
 }
 
+func(s *Server) NewZipkinTracer() (*zipkin.Tracer, error) {
+	// The reporter sends traces to zipkin server
+	reporter := reporterhttp.NewReporter(s.zipkinEndpoint)
+
+	// Local endpoint represent the local service information
+	localEndpoint := &model.Endpoint{ServiceName: "Lens-users-svc", Port: 8080}
+
+	// Sampler tells you which traces are going to be sampled or not. In this case we will record 1 (100%) of traces.
+	sampler, err := zipkin.NewCountingSampler(1)
+	if err != nil {
+		return nil, err
+	}
+
+	t, err := zipkin.NewTracer(
+		reporter,
+		zipkin.WithSampler(sampler),
+		zipkin.WithLocalEndpoint(localEndpoint),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return t, err
+}
+
+// InitDbConnection initializes a database connection and creates associated tables/migrates schemas
+func (s *Server) ConnectToDatabase() (*gorm.DB, error) {
+	config.LoadConfig()
+	connString := config.Config.GetDatabaseConnectionString()
+	db, err := gorm.Open("postgres", connString)
+	if err != nil {
+		s.logger.Error(err.Error())
+		os.Exit(1)
+	}
+
+	s.logger.Info("successfully connected to database")
+	db.SingularTable(true)
+	db.LogMode(false)
+	s.CreateTablesOrMigrateSchemas(db)
+	return db, err
+}
+
+// CreateTablesOrMigrateSchemas creates a given set of tables based on a schema
+// if it does not exist or migrates the table schemas to the latest version
+func (s *Server)CreateTablesOrMigrateSchemas(db *gorm.DB) {
+	var userTable models.UserTable
+	var teamsTable models.TeamTable
+	var groupTable models.GroupTable
+	userTable.MigrateSchemaOrCreateTable(db, s.logger)
+	teamsTable.MigrateSchemaOrCreateTable(db, s.logger)
+	groupTable.MigrateSchemaOrCreateTable(db, s.logger)
+}
+
+// InitQueues initializes a set of producer and consumer amqp queues to be used for things such as
+// account registration emails amongst many others.
+func (s *Server)ConnectToQueues() (amqp.Queue, amqp.Queue) {
+	amqpConnString := "amqp://user:bitnami@stats/"
+	producerQueueNames := []string{"lens_welcome_email", "lens_password_reset_email", "lens_email_reset_email"}
+	consumerQueueNames := []string{"user_inactive"}
+	amqpproducerconn, err := amqp.NewAmqpConnection(amqpConnString, producerQueueNames)
+	if err != nil {
+		s.logger.Error(err.Error())
+	}
+	amqpconsumerconn, err := amqp.NewAmqpConnection(amqpConnString, consumerQueueNames)
+	if err != nil {
+		s.logger.Error(err.Error())
+	}
+	return amqpproducerconn, amqpconsumerconn
+}
+
 func (s *Server) ListenAndServe(stopCh <-chan struct{}) {
 	go s.startMetricsServer()
 
 	s.registerHandlers()
 	s.registerMiddlewares()
+	_, err := s.ConnectToDatabase()
+	if err != nil {
+		s.logger.Error(err.Error())
+	}
+	s.ConnectToQueues()
 
 	var handler http.Handler
 	if s.config.H2C {

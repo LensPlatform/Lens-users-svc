@@ -26,6 +26,7 @@ func main() {
 	fs.Int("port", 9898, "HTTP port")
 	fs.Int("port-metrics", 0, "metrics port")
 	fs.Int("grpc-port", 0, "gRPC port")
+	fs.String("zipkingEndpoint", "http://localhost:9411/api/v2/spans", "Defines the zipkin endpoint used to access traces")
 	fs.String("grpc-service-name", "podinfo", "gPRC service name")
 	fs.String("level", "info", "log level debug, info, warn, error, flat or panic")
 	fs.StringSlice("backend-url", []string{}, "backend service URL")
@@ -36,7 +37,7 @@ func main() {
 	fs.String("config-path", "", "config dir path")
 	fs.String("config", "config.yaml", "config file name")
 	fs.String("ui-path", "./ui", "UI local path")
-	fs.String("ui-logo", "", "UI logo")
+	fs.String("ui-logo", "https://raw.githubusercontent.com/stefanprodan/podinfo/gh-pages/cuddle_clap.gif", "UI logo")
 	fs.String("ui-color", "cyan", "UI color")
 	fs.String("ui-message", fmt.Sprintf("greetings from podinfo v%v", version.VERSION), "UI message")
 	fs.Bool("h2c", false, "Allow upgrading to H2C")
@@ -124,7 +125,7 @@ func main() {
 	)
 
 	// start HTTP server
-	srv, _ := api.NewServer(&srvCfg, logger)
+	srv, _ := api.NewServer(&srvCfg, logger, viper.GetString("zipkingEndpoint"))
 	stopCh := signals.SetupSignalHandler()
 	srv.ListenAndServe(stopCh)
 }
