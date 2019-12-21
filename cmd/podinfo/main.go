@@ -26,7 +26,7 @@ func main() {
 	fs.Int("port", 9898, "HTTP port")
 	fs.Int("port-metrics", 0, "metrics port")
 	fs.Int("grpc-port", 0, "gRPC port")
-	fs.String("zipkingEndpoint", "http://localhost:9411/api/v2/spans", "Defines the zipkin endpoint used to access traces")
+	fs.String("zipkingEndpoint", "http://localhost:9411/zipkin/", "Defines the zipkin endpoint used to access traces")
 	fs.String("grpc-service-name", "podinfo", "gPRC service name")
 	fs.String("level", "info", "log level debug, info, warn, error, flat or panic")
 	fs.StringSlice("backend-url", []string{}, "backend service URL")

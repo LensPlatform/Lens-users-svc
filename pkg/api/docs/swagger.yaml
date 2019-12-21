@@ -16,6 +16,8 @@ definitions:
         type: string
       hostname:
         type: string
+      logo:
+        type: string
       message:
         type: string
       num_cpu:
@@ -47,12 +49,12 @@ host: localhost:9898
 info:
   contact:
     name: Source Code
-    url: https://github.com/stefanprodan/podinfo
-  description: Go microservice template for Kubernetes.
+    url: https://github.com/LensPlatform/Lens-users-svc
+  description: Go microservice for Kubernetes.
   license:
     name: MIT License
     url: https://github.com/stefanprodan/podinfo/blob/master/LICENSE
-  title: Podinfo API
+  title: Lens Platform API
   version: "2.0"
 paths:
   /:
@@ -80,7 +82,6 @@ paths:
           description: Accepted
           schema:
             $ref: '#/definitions/api.MapResponse'
-            type: object
       summary: Echo
       tags:
       - HTTP API
@@ -96,7 +97,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.RuntimeResponse'
-            type: object
       summary: Runtime information
       tags:
       - HTTP API
@@ -113,7 +113,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.MapResponse'
-            type: object
       summary: Chunked transfer encoding
       tags:
       - HTTP API
@@ -129,7 +128,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.MapResponse'
-            type: object
       summary: Delay
       tags:
       - HTTP API
@@ -145,7 +143,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.ArrayResponse'
-            type: object
       summary: Environment
       tags:
       - HTTP API
@@ -161,7 +158,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.ArrayResponse'
-            type: object
       summary: Headers
       tags:
       - HTTP API
@@ -178,19 +174,6 @@ paths:
           schema:
             type: string
       summary: Liveness check
-      tags:
-      - Kubernetes
-  /metrics:
-    get:
-      description: returns HTTP requests duration and Go runtime metrics
-      produces:
-      - text/plain
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-      summary: Prometheus metrics
       tags:
       - Kubernetes
   /panic:
@@ -257,7 +240,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.MapResponse'
-            type: object
       summary: Status code
       tags:
       - HTTP API
@@ -274,7 +256,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.MapResponse'
-            type: object
       summary: Upload file
       tags:
       - HTTP API
@@ -305,7 +286,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.TokenResponse'
-            type: object
       summary: Generate JWT token
       tags:
       - HTTP API
@@ -321,7 +301,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.TokenValidationResponse'
-            type: object
         "401":
           description: Unauthorized
           schema:
@@ -339,7 +318,6 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/api.MapResponse'
-            type: object
       summary: Version
       tags:
       - HTTP API
@@ -355,8 +333,10 @@ paths:
           description: Accepted
           schema:
             $ref: '#/definitions/api.MapResponse'
-            type: object
       summary: Echo over websockets
       tags:
       - HTTP API
+schemes:
+- http
+- https
 swagger: "2.0"

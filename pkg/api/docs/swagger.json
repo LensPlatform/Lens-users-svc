@@ -1,11 +1,15 @@
 {
+    "schemes": [
+        "http",
+        "https"
+    ],
     "swagger": "2.0",
     "info": {
-        "description": "Go microservice template for Kubernetes.",
-        "title": "Podinfo API",
+        "description": "Go microservice for Kubernetes.",
+        "title": "Lens Platform API",
         "contact": {
             "name": "Source Code",
-            "url": "https://github.com/stefanprodan/podinfo"
+            "url": "https://github.com/LensPlatform/Lens-users-svc"
         },
         "license": {
             "name": "MIT License",
@@ -53,7 +57,6 @@
                     "202": {
                         "description": "Accepted",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.MapResponse"
                         }
                     }
@@ -77,7 +80,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.RuntimeResponse"
                         }
                     }
@@ -101,7 +103,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.MapResponse"
                         }
                     }
@@ -125,7 +126,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.MapResponse"
                         }
                     }
@@ -149,7 +149,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ArrayResponse"
                         }
                     }
@@ -173,7 +172,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.ArrayResponse"
                         }
                     }
@@ -193,26 +191,6 @@
                     "Kubernetes"
                 ],
                 "summary": "Liveness check",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/metrics": {
-            "get": {
-                "description": "returns HTTP requests duration and Go runtime metrics",
-                "produces": [
-                    "text/plain"
-                ],
-                "tags": [
-                    "Kubernetes"
-                ],
-                "summary": "Prometheus metrics",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -318,7 +296,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.MapResponse"
                         }
                     }
@@ -342,7 +319,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.MapResponse"
                         }
                     }
@@ -389,7 +365,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.TokenResponse"
                         }
                     }
@@ -413,7 +388,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.TokenValidationResponse"
                         }
                     },
@@ -440,7 +414,6 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.MapResponse"
                         }
                     }
@@ -464,7 +437,6 @@
                     "202": {
                         "description": "Accepted",
                         "schema": {
-                            "type": "object",
                             "$ref": "#/definitions/api.MapResponse"
                         }
                     }
@@ -494,6 +466,9 @@
                     "type": "string"
                 },
                 "hostname": {
+                    "type": "string"
+                },
+                "logo": {
                     "type": "string"
                 },
                 "message": {

@@ -28,7 +28,7 @@ type User struct {
 	Age               int            `json:"age" validate:"gte=0,lte=120"`
 	BirthDate         string         `json:"birth_date" validate:"required"`
 	PhoneNumber       string         `json:"phone_number,omitempty" validate:"required"`
-	Addresses         postgres.Jsonb `json:"location,omitempty" validate:"-"`
+	Addresses         Address `json:"location,omitempty" validate:"-"`
 	Bio               string         `json:"bio,omitempty" validate:"required"`
 	Education         Education      `json:"education,omitempty" validate:"-"`
 	UserInterests     Interests      `json:"interests,omitempty" validate:"-"`
@@ -62,7 +62,6 @@ type TeamOf struct {
 	Type string   `json:"team_type" validate:"-"`
 	Tags []string `json:"tags" validate:"-"`
 }
-
 type Education struct {
 	JsonEmbeddable
 	MostRecentInstitutionName string `json:"most_recent_institution_name" validate:"required"`
@@ -72,6 +71,7 @@ type Education struct {
 	Minor                     string `json:"minor" validate:"required"`
 	YearsOfAttendance         string `json:"years_of_attendance" validate:"required"`
 }
+
 
 type Interests struct {
 	JsonEmbeddable

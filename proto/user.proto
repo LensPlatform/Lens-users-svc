@@ -1,0 +1,86 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+message User {
+    string ID = 1;
+    google.protobuf.Timestamp CreatedAt = 2;
+    google.protobuf.Timestamp UpdatedAt = 3;
+    string Type = 4;
+    string FirstName = 5;
+    string LastName = 6;
+    string UserName = 7;
+    string Gender = 8;
+    string Languages = 9;
+    string Password = 10;
+    string PassWordConfirmed = 11;
+    int32 Age = 12;
+    string BirthDate = 13;
+    string PhoneNumber = 14;
+    string Bio = 15;
+    string Headline = 16;
+    string Intent = 17;
+    Address UserAddress = 18;
+    Education UserEducation = 19;
+    Interests UserInterests =  20;
+    Subscriptions UserSubscriptions = 21;
+    SkillSet Skills = 22;
+    SubTeam Groups = 23;
+    SubTeam Teams = 24;
+}
+
+message Address
+{
+    string City = 1;
+    string State = 2;
+    string Country = 3;
+}
+
+message Education
+{
+    string MostRecentInstitutionName = 1;
+    string HighestDegreeEarned  = 2;
+    bool Graduated = 3;
+    string Major = 4;
+    string Minor  = 5;
+    string YearsOfAttendance = 6;
+}
+
+message Interests {
+    repeated Industry Industry = 1;
+    repeated Topic Topic = 2;
+}
+
+message Topic
+{
+    string TopicName = 1;
+    string TopicType = 2;
+}
+
+message Industry {
+    string IndustryName = 1;
+}
+
+message Subscriptions {
+    string SubscriptionName = 1;
+    bool Subscribe = 2;
+}
+
+message SkillSet{
+    repeated Skill Skills = 1;
+}
+
+message Skill {
+     string Type = 1;
+     string Name = 2;
+}
+
+message TeamMember {
+    uint32  Id = 1;
+    string  Name = 2;
+    string Type= 3;
+    repeated string Tags = 4;
+}
+
+message SubTeam {
+    repeated TeamMember team = 1;
+}
