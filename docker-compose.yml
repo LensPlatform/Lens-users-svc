@@ -14,6 +14,7 @@ services:
       - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
   storage:
     image: openzipkin/zipkin-mysql
     container_name: mysql
@@ -37,7 +38,7 @@ services:
       # Uncomment to enable self-tracing
       # - SELF_TRACING_ENABLED=true
       # Uncomment to enable debug logging
-      # - JAVA_OPTS=-Dlogging.level.zipkin2=DEBUG
+       - JAVA_OPTS=-Dlogging.level.zipkin2=DEBUG
     ports:
       # Port used for the Zipkin UI and HTTP Api
       - 9411:9411
@@ -80,8 +81,8 @@ services:
       - app-tier
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.users-microservice-v1.rule=Host(`users-microservice-v1.localhost`)"
-      - "traefik.http.routers.users-microservice-v1.entrypoints=web"
+      - "traefik.http.routers.lens-users-svc-v1.rule=Host(`lens-users-svc-v1.localhost`)"
+      - "traefik.http.routers.lens-users-svc-v1.entrypoints=web"
     depends_on:
       - stats
       - queue-ram1

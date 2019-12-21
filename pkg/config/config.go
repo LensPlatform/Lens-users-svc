@@ -6,9 +6,11 @@
 package config
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
+
+	"github.com/joho/godotenv"
+
 )
 
 // Configuration stores setting values
@@ -68,15 +70,14 @@ func LoadConfig() {
 }
 
 func Init(){
-	var config Configuration
-	configFile, err := os.Open("config.json")
-	defer configFile.Close()
+	err := godotenv.Load("development.env")
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("Unable to parse env file")
 	}
-	jsonParser := json.NewDecoder(configFile)
-	_ = jsonParser.Decode(&config)
-	Config = &config
+
+	debug := os.Getenv("debug.addr")
+	fmt.Println("debug", debug)
+
 }
 
 // GetDatabaseConnectionString Creates a database connection string from the service configuration settings
