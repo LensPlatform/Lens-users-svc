@@ -7,7 +7,10 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/LensPlatform/Lens-users-svc/pkg/helper"
-	model "github.com/LensPlatform/Lens-users-svc/pkg/models"
+	"github.com/LensPlatform/Lens-users-svc/pkg/model/proto/group"
+	baseteam "github.com/LensPlatform/Lens-users-svc/pkg/model/proto/team"
+	baseuser "github.com/LensPlatform/Lens-users-svc/pkg/model/proto/user"
+	"github.com/LensPlatform/Lens-users-svc/pkg/tables"
 )
 
 var (
@@ -19,9 +22,9 @@ var (
 
 type DBHandler interface {
 	// Create
-	CreateUser(user model.User) error
-	CreateTeam(founder model.User, team model.Team) error
-	CreateGroup(owner model.User, group model.Group) error
+	CreateUser(user baseuser.User) error
+	CreateTeam(founder baseuser.User, team baseteam.Team) error
+	CreateGroup(owner baseuser.User, group group.Group) error
 
 	// GET
 	GetUserById(id string) (model.Team, error)
@@ -186,7 +189,7 @@ func (db Database) GetUserBasedOnParam(param string, query string) (model.User, 
 		return model.User{}, errors.New(errMsg)
 	}
 
-	var table model.UserTable
+	var table tables.UserTable
 	rows, e := db.connection.Table("users_table").Raw(query, param).Rows()
 	if e != nil {
 		return model.User{}, e

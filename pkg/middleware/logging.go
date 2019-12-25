@@ -30,7 +30,9 @@ func (m *LoggingMiddleware) Handler(next http.Handler) http.Handler {
 
 		defer func(begin time.Time) {
 			m.logger.Info("Transport Log",
-				zap.Any("invocation duration", time.Since(begin)))
+				zap.String("[METHOD] : ", r.Method),
+				zap.String("[URL] : ", r.URL.String()),
+				zap.Any("[DURATION] : ", time.Since(begin)))
 		}(time.Now())
 
 		next.ServeHTTP(w, r)

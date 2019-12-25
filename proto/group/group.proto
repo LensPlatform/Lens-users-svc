@@ -1,0 +1,16 @@
+syntax = "proto3";
+import "proto/common/common.proto";
+import "github.com/infobloxopen/atlas-app-toolkit/rpc/resource/resource.proto";
+import "github.com/infobloxopen/protoc-gen-gorm/options/gorm.proto";
+
+message Group {
+	option (gorm.opts).ormable = true;
+	atlas.rpc.Identifier ID = 1 [(gorm.field).tag = {type: "uuid" primary_key: true}];
+	string Type = 2;
+	string Name = 3;
+	TeamMember Owner = 4;
+	string Bio = 5;
+	repeated string Tags = 6;
+	int32 NumGroupMembers = 7;
+	repeated TeamMember GroupMembers = 8;
+}

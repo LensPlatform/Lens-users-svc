@@ -38,7 +38,7 @@ services:
       # Uncomment to enable self-tracing
       # - SELF_TRACING_ENABLED=true
       # Uncomment to enable debug logging
-       - JAVA_OPTS=-Dlogging.level.zipkin2=DEBUG
+      # - JAVA_OPTS=-Dlogging.level.zipkin2=DEBUG
     ports:
       # Port used for the Zipkin UI and HTTP Api
       - 9411:9411

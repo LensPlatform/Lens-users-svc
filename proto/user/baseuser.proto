@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+import "proto/common/common.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "github.com/infobloxopen/protoc-gen-gorm/options/gorm.proto";
+import "github.com/infobloxopen/protoc-gen-gorm/types/types.proto";
+import "github.com/infobloxopen/atlas-app-toolkit/query/collection_operators.proto";
+import "github.com/infobloxopen/atlas-app-toolkit/rpc/resource/resource.proto";
+
+message User {
+    option (gorm.opts).ormable = true;
+    atlas.rpc.Identifier ID = 1 [(gorm.field).tag = {type: "uuid" primary_key: true}];
+    google.protobuf.Timestamp CreatedAt = 2;
+    google.protobuf.Timestamp UpdatedAt = 3;
+    string Type = 4;
+    string FirstName = 5;
+    string LastName = 6;
+    string UserName = 7;
+    string Gender = 8;
+    string Languages = 9;
+    string Password = 10;
+    string PassWordConfirmed = 11;
+    int32 Age = 12;
+    google.protobuf.Timestamp BirthDate = 13;
+    uint32 PhoneNumber = 14;
+    string Bio = 15;
+    string Headline = 16;
+    string Intent = 17;
+    Address UserAddress = 18 [(gorm.field).tag = {type: "jsonb"}];
+    Education UserEducation = 19 [(gorm.field).tag = {type: "jsonb"}];
+    Interests UserInterests =  20 [(gorm.field).tag = {type: "jsonb"}];
+    Subscriptions UserSubscriptions = 21 [(gorm.field).tag = {type: "jsonb"}];
+    SkillSet Skills = 22 [(gorm.field).tag = {type: "jsonb"}];
+    repeated TeamMember Groups = 23 [(gorm.field).tag = {type: "jsonb"}];
+    repeated TeamMember Teams = 24 [(gorm.field).tag = {type: "jsonb"}];
+    SocialMedia SocialMedia = 25 [(gorm.field).tag = {type: "jsonb"}];
+    Contact Contact = 26 [(gorm.field).tag = {type: "jsonb"}];
+    Settings Settings = 27 [(gorm.field).tag = {type: "jsonb"}];
+    string Email = 28;
+}

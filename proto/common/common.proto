@@ -1,0 +1,196 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+message Address
+{
+    string City = 1;
+    string State = 2;
+    string Country = 3;
+}
+
+message Education
+{
+    string MostRecentInstitutionName = 1;
+    string HighestDegreeEarned  = 2;
+    bool Graduated = 3;
+    string Major = 4;
+    string Minor  = 5;
+    string YearsOfAttendance = 6;
+}
+
+message Interests {
+    repeated Industry Industry = 1;
+    repeated Topic Topic = 2;
+}
+
+message Topic
+{
+    string TopicName = 1;
+    string TopicType = 2;
+}
+
+message Industry {
+    string IndustryName = 1;
+}
+
+message Subscriptions {
+    string SubscriptionName = 1;
+    bool Subscribe = 2;
+}
+
+message SkillSet{
+    repeated Skill Skills = 1;
+}
+
+message Skill {
+    string Type = 1;
+    string Name = 2;
+}
+
+message TeamMember {
+    uint32  Id = 1;
+    string  Name = 2;
+    string Title = 3;
+    repeated string Tags = 4;
+}
+
+message Contact {
+    string Email = 1;
+    string PhoneNumber = 2;
+}
+
+message SocialMedia {
+    string Website = 1;
+    string Facebook = 2;
+    string Twitter = 3;
+    string LinkedIn = 4;
+    string Instagram = 5;
+    string Youtube = 6;
+}
+
+message Funding {
+    int32 TotalFunding = 1;
+    string LatestRound = 2;
+    string LatestRoundDate = 3;
+    int32 LatestRoundFunding = 4;
+    repeated TeamMember Investors = 5;
+    string InvestorType  = 6; //Accelerator
+    string InvestmentStage = 7; // Debt, Early Stage Venture, Seed
+}
+
+message Details {
+    string IPOStatus = 1;
+    string CompanyType = 2;// for-profit
+}
+
+message Experience {
+    string CompanyName = 1;
+    string StartDate = 2;
+    string EndDate = 3;
+    string Title = 4;
+}
+
+message Investment {
+    string CompanyName = 1;
+    string Industry = 2;
+}
+
+message InvestorDetails {
+    uint32 TeamID = 1; // Id serves as a primary key and references the associated user id
+    google.protobuf.Timestamp CreatedAt = 2;
+    google.protobuf.Timestamp UpdatedAt = 3;
+    string InvestorType = 4;
+    string InvestmentStage = 5;
+    int32 NumberOfExits = 6;
+    int32 NumberOfinvestments = 7;
+    int32 NumberOfFunds = 8;
+}
+
+message StartupDetails {
+    uint32 TeamID = 1; // Id serves as a primary key and references the associated user id
+    google.protobuf.Timestamp CreatedAt = 2;
+    google.protobuf.Timestamp UpdatedAt = 3;
+    Funding Funding = 4;
+    Details CompanyDetails = 5;
+}
+
+message Settings {
+    Notification Notifications  = 1;
+    Privacy Privacy = 2;
+    Payments Payment = 3;
+}
+
+message Payments  {
+    Card Debit = 1;
+    Card Credit = 2;
+    Pin SecurityPin = 3;
+}
+
+message Card {
+    string CardNumber = 1;
+    string SecurityCode = 2;
+    string CardZipCode  = 3;
+    string FullName = 4;
+    string Address = 5;
+    string City = 6;
+    string State = 7;
+    string ZipCode = 8;
+}
+
+message Pin {
+    bool PinEnabled = 1;
+    string Pin = 2;
+}
+
+message Privacy {
+    bool ActivityStatus  = 1;
+    bool PrivateAccount  = 2;
+    repeated string BlockedAccountIds = 3;
+    repeated string MutedAccountIds = 4;
+}
+
+message Notification {
+    bool PauseAll   = 1;
+    PostAndCommentsPushNotificationSettings PostsAndComments  = 2;
+    FollowingAndFollowersPushNotificationSettings FollowingAndFollowers = 3;
+    DirectMessagesPushNotificationSettings DirectMessages  = 4;
+    EmailAndSmsPushNotificationSettings EmailAndSms = 5;
+}
+
+message PostAndCommentsPushNotificationSettings {
+    TieredPushNotificationSetting Likes   = 1; // yoan liked your photo
+    TieredPushNotificationSetting LikesAndCommentsOnPostsOfYou = 2; // yoan commented on a post you're tagged in
+    TieredPushNotificationSetting PostsOfYou = 3; // yoan tagged you in a photo
+    TieredPushNotificationSetting Comments = 4; // yoan commented nice pic
+    TieredPushNotificationSetting CommentLikes = 5; // yoan liked your comment "nice shot"
+}
+
+message FollowingAndFollowersPushNotificationSettings {
+    PushNotificationSetting FollowerRequests = 1;  // yoan has requested to follow you
+    PushNotificationSetting AcceptedFollowerRequests = 2;  // yoan accepted your follow request
+    TieredPushNotificationSetting MentionsInBio = 3; // yoan mentioned you in his bio
+}
+
+message DirectMessagesPushNotificationSettings {
+    PushNotificationSetting MessageRequests = 1; // yoan wants to send you message
+    PushNotificationSetting Message  = 2;// yoan has sent you a message
+    PushNotificationSetting GroupRequests = 3; // yoan wants to add willy to your group
+}
+
+message EmailAndSmsPushNotificationSettings {
+    PushNotificationSetting FeedbackEmail = 1;
+    PushNotificationSetting ReminderEmails = 2;
+    PushNotificationSetting ProductEmails  = 3;
+    PushNotificationSetting NewsEmails   = 4;
+}
+
+message TieredPushNotificationSetting {
+    bool Off = 1;
+    bool FromPeopleIFollow = 2;
+    bool FromEveryone = 3;
+}
+
+message PushNotificationSetting {
+    bool Off = 1;
+    bool On = 2;
+}

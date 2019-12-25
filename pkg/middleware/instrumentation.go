@@ -34,7 +34,7 @@ func NewInstrumentationMiddleware(operationName string) *InstrumentationMiddlewa
 func (m *InstrumentationMiddleware) Handler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
 		defer func(begin time.Time) {
-			m.duration.With("success", fmt.Sprint(r.Context().Err() == nil)).Observe(time.Since(begin).Seconds())
+			m.duration.With("Request Duration", fmt.Sprint(r.Context().Err() == nil)).Observe(time.Since(begin).Seconds())
 		}(time.Now())
 
 		next.ServeHTTP(w, r)

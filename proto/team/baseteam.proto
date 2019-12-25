@@ -1,0 +1,30 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+import "proto/common/common.proto";
+import "github.com/infobloxopen/protoc-gen-gorm/options/gorm.proto";
+import "github.com/infobloxopen/atlas-app-toolkit/rpc/resource/resource.proto";
+
+message Team {
+    option (gorm.opts).ormable = true;
+    atlas.rpc.Identifier id = 1 [(gorm.field).tag = {type: "uuid" primary_key: true}];
+    google.protobuf.Timestamp CreatedAt  = 2;
+    google.protobuf.Timestamp UpdatedtAt = 3;
+    string Name = 4;
+	repeated string Tags = 5;
+	string Email = 6;
+	string Type = 7; // investor or startup team
+    string Overview = 8;  // about the team
+    string IndustryOfInterest = 9;  // industry of interest
+    string FoundedDate = 10;
+	repeated TeamMember Founders = 11;
+	int32 NumberOfEmployees = 12; // size of team
+	string Headquarters = 13;
+	string Interests = 14;
+	repeated TeamMember TeamMembers = 15 [(gorm.field).tag = {type: "jsonb"}];
+    repeated TeamMember Advisors = 16 [(gorm.field).tag = {type: "jsonb"}];
+    SocialMedia SocialMedia = 17 [(gorm.field).tag = {type: "jsonb"}];
+    Contact Contact = 18 [(gorm.field).tag = {type: "jsonb"}];
+    Privacy PrivacySetting = 19 [(gorm.field).tag = {type: "jsonb"}];
+    InvestorDetails InvestorDetails = 20 [(gorm.field).tag = {type: "jsonb"}];
+    StartupDetails StartupDetails = 21 [(gorm.field).tag = {type: "jsonb"}];
+}

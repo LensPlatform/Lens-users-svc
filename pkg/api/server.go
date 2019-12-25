@@ -28,7 +28,7 @@ import (
 	"github.com/LensPlatform/Lens-users-svc/pkg/config"
 	"github.com/LensPlatform/Lens-users-svc/pkg/fscache"
 	"github.com/LensPlatform/Lens-users-svc/pkg/middleware"
-	"github.com/LensPlatform/Lens-users-svc/pkg/models"
+	"github.com/LensPlatform/Lens-users-svc/pkg/tables"
 
 	reporterhttp "github.com/openzipkin/zipkin-go/reporter/http"
 
@@ -159,7 +159,14 @@ func (s *Server) registerMiddlewares() {
 	zipkinMw := middleware.NewZipKinTracerMiddleware("API", tracer)
 	s.router.Use(zipkinMw.Handler)
 
+	panicMw := middleware.NewPanicRecovery(*s.logger)
+	s.router.Use(panicMw.Handler)
+
+	circuitBreakerMw := middleware.NewCircuitBreaker("users_microservice", 5, 0, time.Duration(60) * time.Second, nil, *s.logger)
+	s.router.Use(circuitBreakerMw.Handler)
+
 	s.router.Use(versionMiddleware)
+
 	if s.config.RandomDelay {
 		s.router.Use(randomDelayMiddleware)
 	}
@@ -213,9 +220,9 @@ func (s *Server) ConnectToDatabase() (*gorm.DB, error) {
 // CreateTablesOrMigrateSchemas creates a given set of tables based on a schema
 // if it does not exist or migrates the table schemas to the latest version
 func (s *Server)CreateTablesOrMigrateSchemas(db *gorm.DB) {
-	var userTable models.UserTable
-	var teamsTable models.TeamTable
-	var groupTable models.GroupTable
+	var userTable tables.UserTable
+	var teamsTable tables.TeamTable
+	var groupTable tables.GroupTable
 	userTable.MigrateSchemaOrCreateTable(db, s.logger)
 	teamsTable.MigrateSchemaOrCreateTable(db, s.logger)
 	groupTable.MigrateSchemaOrCreateTable(db, s.logger)

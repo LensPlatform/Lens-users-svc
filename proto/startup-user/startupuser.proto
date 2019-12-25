@@ -1,0 +1,14 @@
+syntax = "proto3";
+import "proto/common/common.proto";
+import "google/protobuf/timestamp.proto";
+import "github.com/infobloxopen/atlas-app-toolkit/rpc/resource/resource.proto";
+import "github.com/infobloxopen/protoc-gen-gorm/options/gorm.proto";
+
+message StartupUser {
+	option (gorm.opts).ormable = true;
+	atlas.rpc.Identifier ID = 1 [(gorm.field).tag = {type: "uuid" primary_key: true}];
+	google.protobuf.Timestamp CreatedAt = 2;
+	google.protobuf.Timestamp UpdatedAt = 3;
+    string Title = 4; // founder, cto, ceo, ...etc
+	repeated Experience Experience = 5;
+}

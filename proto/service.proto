@@ -1,0 +1,99 @@
+syntax = "proto3";
+import "proto/user/baseuser.proto";
+import "proto/team/baseteam.proto";
+import "proto/group/group.proto";
+import "proto/startup-user/startupuser.proto";
+import "proto/investor-user/investoruser.proto";
+
+package usersService;
+
+service UsersService {
+    option (gorm.server).autogen = true;
+    // Define Get, Update, Create, Delete requests for all user types
+    rpc GetUserByID(Uint32TypeRequest) returns (UserResponse);
+    rpc GetUserByUsername(StringTypeRequest) returns (UserResponse);
+    rpc GetUserByEmail(StringTypeRequest) returns (UserResponse);
+    rpc GetUsersByType(GetUsersSearchRequest) returns (UserResponse);
+
+    rpc GetStartupUserByID(Uint32TypeRequest) returns (StartupUserResponse);
+    rpc GetInvestorUserByID(Uint32TypeRequest) returns (InvestorUserResponse);
+
+    rpc CreateUser(User) returns (UpdateOrCreateEntityResponse);
+    rpc CreateStartupUser(StartupUser) returns (UpdateOrCreateEntityResponse);
+    rpc CreateInvestorUser(InvestorUser) returns (UpdateOrCreateEntityResponse);
+
+    rpc UpdateUser(User) returns (UpdateOrCreateEntityResponse);
+    rpc UpdateStartupUser(StartupUser) returns (UpdateOrCreateEntityResponse);
+    rpc UpdateInvestorUser(InvestorUser) returns (UpdateOrCreateEntityResponse);
+
+    rpc DeleteUser(Uint32TypeRequest) returns (UpdateOrCreateEntityResponse);
+    rpc DeleteStartupUser(Uint32TypeRequest) returns (UpdateOrCreateEntityResponse);
+    rpc DeleteInvestorUser(Uint32TypeRequest) returns (UpdateOrCreateEntityResponse);
+    rpc DeleteProfile(Uint32TypeRequest) returns (UpdateOrCreateEntityResponse);
+
+    // Define Get, Update, Create, Delete requests for all team types
+    rpc CreateTeam(Team) returns (UpdateOrCreateEntityResponse);
+
+    rpc UpdateTeam(Team) returns (UpdateOrCreateEntityResponse);
+
+    rpc DeleteTeam(Uint32TypeRequest) returns (UpdateOrCreateEntityResponse);
+
+    rpc GetTeamById(Uint32TypeRequest) returns (Team);
+    rpc GetTeamByName(StringTypeRequest) returns (Team);
+    rpc GetTeamByEmail(StringTypeRequest) returns (Team);
+
+    rpc GetTeamsByType(StringTypeRequest) returns (Team);
+    rpc GetTeamsByIndustry(StringTypeRequest) returns (TeamResponse);
+
+    // Define Get, Update, Create, Delete requests for all group types
+    rpc CreateGroup(Group) returns (UpdateOrCreateEntityResponse);
+
+    rpc GetGroupById(Uint32TypeRequest) returns (GroupResponse);
+    rpc GetGroupByName(Uint32TypeRequest) returns (GroupResponse);
+
+    rpc GetGroupsByType(StringTypeRequest) returns (GroupResponse);
+
+    rpc UpdateGroup(Group) returns (UpdateOrCreateEntityResponse);
+
+    rpc DeleteGroup(Uint32TypeRequest) returns (UpdateOrCreateEntityResponse);
+}
+
+message GetUsersSearchRequest {
+    string Message = 1; // investor or startup
+    int32 MaxResults = 2;
+}
+
+message Uint32TypeRequest {
+    uint32 Id = 1;
+}
+
+message StringTypeRequest {
+    string Message = 1;
+}
+
+message UserResponse {
+    repeated User Users = 1;
+}
+
+message StartupUserResponse {
+     repeated StartupUser Users = 1;
+}
+
+message InvestorUserResponse {
+    repeated InvestorUser Users = 1;
+}
+
+message TeamResponse {
+    repeated Team Teams = 1;
+}
+
+message GroupResponse {
+    repeated Group Groups = 1;
+}
+
+message UpdateOrCreateEntityResponse {
+    bool Successful = 1;
+}
+
+
+
